@@ -47,7 +47,12 @@ input:focus{outline:3px solid var(--accent);outline-offset:1px}
 .pch{display:flex;align-items:center;gap:6px}
 .pch input[type=radio]{width:auto;flex:none;accent-color:#1faa59;margin:0}
 .pch input[type=text]{padding:5px 8px}
-.chs{display:grid;gap:10px;width:100%;max-width:760px;margin:0 auto}
+.play{display:flex;gap:16px;align-items:stretch}
+.play .stage{flex:1 1 0;min-width:0;width:auto}
+.chs{display:grid;gap:10px;align-content:center}
+.play .chs{flex:0 0 clamp(210px,28%,320px)}
+#rChoices:empty{display:none}
+@media (max-width:760px){.play{flex-direction:column}.play .chs{flex:none;width:100%}}
 .ch{background:var(--card);color:var(--ink);border:3px solid var(--accent);text-align:left;font-family:var(--bd);font-weight:700;font-size:clamp(1rem,3.4vw,1.4rem);padding:12px 18px;box-shadow:0 4px 0 var(--accent)}
 .ch:hover:not(:disabled){filter:brightness(1.1)}
 .ch.ok{background:#1faa59;border-color:#1faa59;color:#fff;box-shadow:0 4px 0 #0f6d38}
@@ -92,7 +97,10 @@ input:focus{outline:3px solid var(--accent);outline-offset:1px}
     <h1>🔍 Picture Reveal</h1>
     <div class="row"><button class="ghost" id="rBack">⬅ Pictures</button><button class="ghost" id="rHome">👥 Students</button></div>
   </div>
-  <div class="stage" id="stage"><img id="rImg" alt="" draggable="false"><div class="ring" id="ring"></div></div>
+  <div class="play">
+    <div class="stage" id="stage"><img id="rImg" alt="" draggable="false"><div class="ring" id="ring"></div></div>
+    <div class="chs" id="rChoices"></div>
+  </div>
   <div class="row ctl" style="justify-content:center">
     <b>Circle size</b>
     <button class="ghost sm" id="rMinus">−</button>
@@ -105,7 +113,6 @@ input:focus{outline:3px solid var(--accent);outline-offset:1px}
     <button id="rShow">👁 Show answer</button>
     <button class="ghost" id="rNext">Next ▶</button>
   </div>
-  <div class="chs" id="rChoices"></div>
   <div class="status" id="rAns"></div>
 </section>
 
@@ -365,10 +372,10 @@ input:focus{outline:3px solid var(--accent);outline-offset:1px}
     var s=st(),p=s.pics[picI];
     showAll=false;dragging=false;
     $("rShow").textContent="👁 Show answer";$("rAns").textContent="";$("rAns").style.color="";
+    buildChoices();
     sizeLimits();
     rImg.onerror=function(){$("rAns").textContent="⚠️ Could not load this picture."};
     rImg.src=picUrl(p);
-    buildChoices();
     randomSpot();
   }
   function hasChoices(p){return p.opts&&p.opts.filter(function(o){return o.trim()}).length>=2&&(p.opts[p.c]||"").trim()!==""}
